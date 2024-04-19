@@ -1,6 +1,6 @@
 import numpy as np
-import spconv
-from spconv import SparseConv3d, SubMConv3d
+import spconv.pytorch as spconv
+from spconv.pytorch import SparseConv3d, SubMConv3d
 from torch import nn
 from torch.nn import functional as F
 
@@ -65,17 +65,17 @@ class SparseBasicBlock(spconv.SparseModule):
         identity = x
 
         out = self.conv1(x)
-        out.features = self.bn1(out.features)
-        out.features = self.relu(out.features)
+        out = out.replace_feature(self.bn1(out.features))
+        out = out.replace_feature(self.relu(out.features))
 
         out = self.conv2(out)
-        out.features = self.bn2(out.features)
+        out = out.replace_feature(self.bn2(out.features))
 
         if self.downsample is not None:
             identity = self.downsample(x)
 
-        out.features += identity.features
-        out.features = self.relu(out.features)
+        out = out.replace_feature(out.features + identity.features)
+        out = out.replace_feature(self.relu(out.features))
 
         return out
 
