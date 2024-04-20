@@ -202,7 +202,7 @@ def build_one_cycle_optimizer(model, optimizer_config):
             torch.optim.Adam, betas=(0.9, 0.99), amsgrad=optimizer_config.amsgrad
         )
     else:
-        optimizer_func = partial(torch.optim.Adam, amsgrad=optimizer_cfg.amsgrad)
+        optimizer_func = partial(torch.optim.Adam, amsgrad=optimizer_config.amsgrad)
 
     optimizer = OptimWrapper.create(
         optimizer_func,
@@ -381,8 +381,8 @@ def train_detector(model, dataset, cfg, distributed=False, validate=False, logge
     #     val_dataset_cfg = cfg.data.val
     #     eval_cfg = cfg.get('evaluation', {})
     #     dataset_type = DATASETS.get(val_dataset_cfg.type)
-    #     trainer.register_hook(
-    #         KittiEvalmAPHookV2(val_dataset_cfg, **eval_cfg))
+        # trainer.register_hook(
+        #     KittiEvalmAPHookV2(val_dataset_cfg, **eval_cfg))
 
     if cfg.resume_from:
         trainer.resume(cfg.resume_from)

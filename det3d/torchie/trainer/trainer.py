@@ -434,6 +434,7 @@ class Trainer(object):
         self._epoch += 1
 
     def val(self, data_loader, **kwargs):
+        self.logger.info("------------ Validation ------------")
         self.model.eval()
         self.mode = "val"
         self.data_loader = data_loader

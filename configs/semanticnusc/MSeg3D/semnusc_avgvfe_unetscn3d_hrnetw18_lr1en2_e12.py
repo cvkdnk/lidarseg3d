@@ -293,7 +293,7 @@ log_config = dict(
     interval=5,
     hooks=[
         dict(type="TextLoggerHook"),
-        # dict(type='TensorboardLoggerHook')
+        dict(type='TensorboardLoggerHook')
     ],
 )
 
@@ -305,8 +305,9 @@ device_ids = range(8)
 dist_params = dict(backend="nccl", init_method="env://")
 log_level = "INFO"
 work_dir = './work_dirs/{}/'.format(__file__[__file__.rfind('/') + 1:-3])
-load_from = None
+load_from = "work_dirs/semnusc_avgvfe_unetscn3d_hrnetw18_lr1en2_e12/epoch_12.pth"
 resume_from = None 
-workflow = [('train', 1)]
+# workflow = [('train', 1)]
+workflow=[('train', 1), ('val', 1)]
 
 sync_bn_type = "torch"

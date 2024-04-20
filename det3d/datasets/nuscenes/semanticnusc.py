@@ -101,9 +101,9 @@ class SemanticNuscDataset(Dataset):
             self.pipeline = Compose(pipeline)
 
 
-        if self.test_mode:
+        # if self.test_mode:
             # init self.nusc
-            self.nusc = NuScenes(version=version, dataroot=str(self._root_path), verbose=True)
+        self.nusc = NuScenes(version=version, dataroot=str(self._root_path), verbose=True)
 
 
     def reset(self):
@@ -125,6 +125,7 @@ class SemanticNuscDataset(Dataset):
             self.load_infos(self._info_path)
 
         return len(self._semantic_nusc_infos)
+        # return 3
 
     def _set_group_flag(self):
         """Set flag according to image aspect ratio.
@@ -246,7 +247,7 @@ class SemanticNuscDataset(Dataset):
             detail = {}
             result = {"mIoU": miou*100}
             for class_name, class_iou in zip(unique_label_str, per_class_ious):
-                # print('==> %s : %.2f%%' % (class_name, class_iou * 100))
+                print('==> %s : %.2f%%' % (class_name, class_iou * 100))
                 result[class_name] = class_iou * 100
 
             res = {
