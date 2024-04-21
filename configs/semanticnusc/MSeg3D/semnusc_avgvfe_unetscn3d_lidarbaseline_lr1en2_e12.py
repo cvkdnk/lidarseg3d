@@ -7,6 +7,8 @@ from addict.addict import Dict
 
 num_class=17
 
+task_name = 'semnusc_avgvfe_unetscn3d_lidarbaseline_lr1en2_e12'
+
 
 point_cloud_range = [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
 voxel_size=[0.1, 0.1, 0.2]
@@ -167,7 +169,7 @@ total_epochs = 12
 device_ids = range(8)
 dist_params = dict(backend="nccl", init_method="env://")
 log_level = "INFO"
-work_dir = './work_dirs/{}/'.format(__file__[__file__.rfind('/') + 1:-3])
+work_dir = './work_dirs/{}/'.format(task_name)
 load_from = None
 resume_from = None 
 workflow = [('train', 1)]

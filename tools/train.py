@@ -29,6 +29,8 @@ from det3d import torchie
 
 import torch.nn as nn
 
+import wandb
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train a detector")
@@ -69,6 +71,32 @@ def parse_args():
     return args
 
 
+def serialize_config(cfg):
+    """
+    递归遍历配置字典，移除无法被JSON序列化的值。
+
+    Args:
+        cfg (dict): 配置字典。
+
+    Returns:
+        dict: 被清理后，只包含可序列化值的配置字典。
+    """
+    serialized_cfg = {}
+    for key, value in cfg.items():
+        try:
+            # 尝试将值转换为JSON字符串，主要是检查可序列化性
+            json.dumps(value)
+            # 如果成功，添加到结果字典
+            serialized_cfg[key] = value
+        except TypeError:
+            # 如果值不可序列化，打印一个警告（可选）
+            print(f"Warning: Key '{key}' is not serializable and will be skipped.")
+            # 也可以选择将不可序列化的对象转换为其字符串表示
+            # serialized_cfg[key] = str(value)  # 可以选择性地取消注释此行
+
+    return serialized_cfg
+
+
 def main():
 
     # torch.manual_seed(0)
@@ -79,6 +107,10 @@ def main():
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
+    
+    serialized_cfg = serialize_config(cfg.__dict__)
+    wandb.init(project='multimodal', name=cfg.task_name, config=serialized_cfg)
+    
     cfg.local_rank = args.local_rank
 
     # update configs according to CLI args

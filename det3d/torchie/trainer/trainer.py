@@ -30,6 +30,8 @@ from .utils import (
     synchronize,
 )
 
+import wandb
+
 
 def example_to_device(example, device, non_blocking=False) -> dict:
     example_torch = {}
@@ -377,6 +379,7 @@ class Trainer(object):
             losses = model(example, return_loss=True)
             self.call_hook("after_forward")
             loss, log_vars = parse_second_losses(losses)
+            wandb.log(log_vars)
             del losses
 
             outputs = dict(
