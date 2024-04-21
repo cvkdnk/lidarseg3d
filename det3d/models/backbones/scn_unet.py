@@ -6,6 +6,8 @@ import torch.nn as nn
 import numpy as np
 from ..registry import BACKBONES
 from det3d.core.utils import common_utils
+from det3d.utils.utils_vis import visualize_point_cloud_bev
+import os
 
 
 def post_act_block(in_channels, out_channels, kernel_size, indice_key=None, stride=1, padding=0,
@@ -159,6 +161,11 @@ class UNetSCN3D(nn.Module):
             block(16*ratio, 16*ratio, 3, norm_fn=norm_fn, padding=1, indice_key='subm1')
         )
         self.num_point_features = 16*ratio
+        
+        self.vis_interval = kwargs.get('vis_interval', 1000)
+        self.vis_count = 0
+        self.save_dir = kwargs.get('save_dir', 'vis/lidar_features/')
+        os.makedirs(self.save_dir, exist_ok=True)
 
     def UR_block_forward(self, x_lateral, x_bottom, conv_t, conv_m, conv_inv):
         x_trans = conv_t(x_lateral)
@@ -244,6 +251,11 @@ class UNetSCN3D(nn.Module):
             point_cloud_range=self.point_cloud_range
         )
         batch_dict['conv_point_coords'] = torch.cat((x_up1.indices[:, 0:1].float(), point_coords), dim=1)
+        
+        if self.vis_count % self.vis_interval == 0:
+            cur_coords = batch_dict['conv_point_coords'][batch_dict['conv_point_coords'][:, 0] == 0][:, 1:]
+            cur_feats = batch_dict['conv_point_features'][batch_dict['conv_point_coords'][:, 0] == 0].sum(dim=1)
+            visualize_point_cloud_bev(cur_coords, cur_feats, save_path=self.save_dir+f"{self.vis_count}_lidar_feats.png")
 
         return batch_dict
 
