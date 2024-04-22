@@ -71,33 +71,6 @@ def parse_args():
     return args
 
 
-def serialize_config(cfg):
-    """
-    递归遍历配置字典，移除无法被JSON序列化的值。
-
-    Args:
-        cfg (dict): 配置字典。
-
-    Returns:
-        dict: 被清理后，只包含可序列化值的配置字典。
-    """
-
-    if isinstance(cfg, dict):
-        res = {}
-        for key, value in cfg.items():
-            value = serialize_config(value)
-            res[key] = value
-    elif isinstance(cfg, list):
-        res = [serialize_config(cfg_i) for cfg_i in cfg]
-    else:
-        try:
-            json.dumps(cfg)
-            res = cfg
-        except Exception:
-            res = str(cfg)
-    return res
-
-
 def main():
 
     # torch.manual_seed(0)
@@ -108,8 +81,6 @@ def main():
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
-    
-    serialized_cfg = serialize_config(cfg.__dict__)
     
     cfg.local_rank = args.local_rank
 
@@ -152,7 +123,7 @@ def main():
     logger.info("Distributed training: {}".format(distributed))
     logger.info(f"torch.backends.cudnn.benchmark: {torch.backends.cudnn.benchmark}")
 
-    wandb.init(project='multimodal', name=cfg.task_name, config=serialized_cfg)
+    wandb.init(project='multimodal', name=cfg.task_name)
     if args.local_rank == 0:
         # copy important files to backup
         backup_dir = os.path.join(cfg.work_dir, "det3d")
@@ -172,7 +143,6 @@ def main():
 
 
     model = build_detector(cfg.model, train_cfg=cfg.train_cfg, test_cfg=cfg.test_cfg)
-    wandb.log({'model': model})
 
     datasets = [build_dataset(cfg.data.train)]
 

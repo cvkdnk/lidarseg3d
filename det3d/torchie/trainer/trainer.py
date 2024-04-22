@@ -380,7 +380,7 @@ class Trainer(object):
             self.call_hook("after_forward")
             loss, log_vars = parse_second_losses(losses)
             for k, v in log_vars.items():
-                wandb.log({f"train/{k}": v})
+                wandb.log({f"train/{k}": v[0]})
             del losses
 
             outputs = dict(
