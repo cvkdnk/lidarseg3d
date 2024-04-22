@@ -110,7 +110,6 @@ def main():
     cfg = Config.fromfile(args.config)
     
     serialized_cfg = serialize_config(cfg.__dict__)
-    wandb.init(project='multimodal', name=cfg.task_name, config=serialized_cfg)
     
     cfg.local_rank = args.local_rank
 
@@ -153,13 +152,16 @@ def main():
     logger.info("Distributed training: {}".format(distributed))
     logger.info(f"torch.backends.cudnn.benchmark: {torch.backends.cudnn.benchmark}")
 
-
+    wandb.init(project='multimodal', name=cfg.task_name, config=serialized_cfg)
     if args.local_rank == 0:
         # copy important files to backup
         backup_dir = os.path.join(cfg.work_dir, "det3d")
         os.makedirs(backup_dir, exist_ok=True)
+        
         # os.system("cp -r * %s/" % backup_dir)
         # logger.info(f"Backup source files to {cfg.work_dir}/det3d")
+    else:
+        os.environ["WANDB_MODE"] = "dryrun"
 
 
     # set random seeds
@@ -170,7 +172,7 @@ def main():
 
 
     model = build_detector(cfg.model, train_cfg=cfg.train_cfg, test_cfg=cfg.test_cfg)
-    wandb.log_model(model)
+    wandb.log({'model': model})
 
     datasets = [build_dataset(cfg.data.train)]
 

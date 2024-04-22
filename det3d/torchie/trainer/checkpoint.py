@@ -80,8 +80,9 @@ def load_state_dict(module, state_dict, strict=False, logger=None):
         table_data = [header] + shape_mismatch_pairs
         table = AsciiTable(table_data)
         err_msg.append(mismatch_info + table.table)
-    print("missing key: ", missing_keys)
-    print("unexpected key: ", unexpected_keys)
+    print("missing key: ", len(missing_keys))
+    print("unexpected key: ", len(unexpected_keys))
+    print("shape mismatch: ", len(shape_mismatch_pairs))
 
     rank, _ = get_dist_info()
     if len(err_msg) > 0 and rank == 0:
