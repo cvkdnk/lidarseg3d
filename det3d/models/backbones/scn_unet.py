@@ -255,7 +255,7 @@ class UNetSCN3D(nn.Module):
         if self.vis_count % self.vis_interval == 0:
             cur_coords = batch_dict['conv_point_coords'][batch_dict['conv_point_coords'][:, 0] == 0][:, 1:]
             cur_feats = batch_dict['conv_point_features'][batch_dict['conv_point_coords'][:, 0] == 0].sum(dim=1)
-            visualize_point_cloud_bev(cur_coords, cur_feats, save_path=self.save_dir+f"{self.vis_count}_lidar_feats.png")
+            visualize_point_cloud_bev(cur_coords.detach().cpu().numpy(), cur_feats.detach().cpu().numpy(), save_path=self.save_dir+f"{self.vis_count}_lidar_feats.png")
 
         return batch_dict
 
