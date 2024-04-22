@@ -81,20 +81,21 @@ def serialize_config(cfg):
     Returns:
         dict: 被清理后，只包含可序列化值的配置字典。
     """
-    serialized_cfg = {}
-    for key, value in cfg.items():
-        try:
-            # 尝试将值转换为JSON字符串，主要是检查可序列化性
-            json.dumps(value)
-            # 如果成功，添加到结果字典
-            serialized_cfg[key] = value
-        except TypeError:
-            # 如果值不可序列化，打印一个警告（可选）
-            print(f"Warning: Key '{key}' is not serializable and will be skipped.")
-            # 也可以选择将不可序列化的对象转换为其字符串表示
-            # serialized_cfg[key] = str(value)  # 可以选择性地取消注释此行
 
-    return serialized_cfg
+    if isinstance(cfg, dict):
+        res = {}
+        for key, value in cfg.items():
+            value = serialize_config(value)
+            res[key] = value
+    elif isinstance(cfg, list):
+        res = [serialize_config(cfg_i) for cfg_i in cfg]
+    else:
+        try:
+            json.dumps(cfg)
+            res = cfg
+        except Exception:
+            res = str(cfg)
+    return res
 
 
 def main():
