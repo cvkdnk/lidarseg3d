@@ -246,11 +246,11 @@ class SemanticNuscDataset(Dataset):
 
             detail = {}
             result = {"mIoU": miou*100}
-            # print("Summary IoU")
-            # for class_name, class_iou in zip(unique_label_str, per_class_ious):
-            #     print('==> %s : %.2f%%' % (class_name, class_iou * 100))
-            #     result[class_name] = class_iou * 100
-            # print('==> %s : %.2f%%' % ("miou", miou*100))
+            print("Summary IoU")
+            for class_name, class_iou in zip(unique_label_str, per_class_ious):
+                print('==> %s : %.2f%%' % (class_name, class_iou * 100))
+                result[class_name] = class_iou * 100
+            print('==> %s : %.2f%%' % ("miou", miou*100))
 
             res = {
                 "results": result,
