@@ -123,16 +123,17 @@ def main():
     logger.info("Distributed training: {}".format(distributed))
     logger.info(f"torch.backends.cudnn.benchmark: {torch.backends.cudnn.benchmark}")
 
-    wandb.init(project='multimodal', name=cfg.task_name)
     if args.local_rank == 0:
         # copy important files to backup
         backup_dir = os.path.join(cfg.work_dir, "det3d")
         os.makedirs(backup_dir, exist_ok=True)
+        wandb.init(project='multimodal', name=cfg.task_name, entity='neu-cvkdnk')
         
         # os.system("cp -r * %s/" % backup_dir)
         # logger.info(f"Backup source files to {cfg.work_dir}/det3d")
     else:
         os.environ["WANDB_MODE"] = "dryrun"
+        wandb.init(project='other_rank', entity='neu-cvkdnk')
 
 
     # set random seeds

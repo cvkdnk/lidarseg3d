@@ -435,7 +435,6 @@ class Trainer(object):
             self._iter += 1
 
         self.call_hook("after_train_epoch")
-        self._epoch += 1
 
     def val(self, data_loader, **kwargs):
         self.logger.info("------------ Validation ------------")
@@ -559,6 +558,7 @@ class Trainer(object):
                         epoch_runner(data_loaders[i], **kwargs)
                     else:
                         epoch_runner(data_loaders[i], self.epoch, **kwargs)
+            self._epoch += 1
 
         # time.sleep(1)
         self.call_hook("after_run")
