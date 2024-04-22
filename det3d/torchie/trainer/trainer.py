@@ -379,7 +379,8 @@ class Trainer(object):
             losses = model(example, return_loss=True)
             self.call_hook("after_forward")
             loss, log_vars = parse_second_losses(losses)
-            wandb.log(log_vars)
+            for k, v in log_vars:
+                wandb.log({f"train/{k}": v})
             del losses
 
             outputs = dict(
@@ -492,6 +493,7 @@ class Trainer(object):
         self.logger.info("\n")
         for k, v in result_dict["results"].items():
             self.logger.info(f"Evaluation {k}: {v}")
+            wandb.log({f"val/{k}": v})
 
         self.call_hook("after_val_epoch")
 
