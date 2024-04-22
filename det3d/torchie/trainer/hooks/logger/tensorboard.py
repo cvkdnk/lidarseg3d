@@ -43,6 +43,10 @@ class TensorboardLoggerHook(LoggerHook):
             record = trainer.log_buffer.output[var]
             if isinstance(record, str):
                 self.writer.add_text(tag, record, trainer.iter)
+            elif isinstance(record, list):
+                self.writer.add_scalar(
+                    tag, record[0], trainer.iter
+                )
             else:
                 self.writer.add_scalar(
                     tag, trainer.log_buffer.output[var], trainer.iter
